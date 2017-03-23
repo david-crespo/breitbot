@@ -1,20 +1,34 @@
-var Twitter = require('twitter');
+const fs = require('fs');
+const Twitter = require('twitter');
 
-var client = new Twitter({
+const client = new Twitter({
   consumer_key: process.env.TWITTER_KEY,
   consumer_secret: process.env.TWITTER_SECRET,
   access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-client.post(
+const tweetWithMedia = mediaIds => client.post(
   'statuses/update',
   {
-    status: 'this is a bot tweet'
-  },
-  function(error, tweet, response) {
-    if(error) throw error;
-    console.log(tweet);  // Tweet body.
-    console.log(response);  // Raw response object.
+    status: 'these are two screenshots of breitbart.com',
+    media_ids: mediaIds
   }
 );
+
+const printTweetUrl = tweet => {
+  console.log(`https://twitter.com/davidcrespo/status/${tweet.id_str}`)
+};
+
+const image1 = fs.readFileSync('breitbart1.png');
+const image2 = fs.readFileSync('breitbart2.png');
+const images = [image1, image2];
+
+const uploadImage = image => client.post('media/upload', {media: image});
+
+// Make post request on media endpoint. Pass file data as media parameter
+Promise.all(images.map(uploadImage))
+  .then(values => values.map(media => media.media_id_string).join(','))
+  .then(tweetWithMedia)
+  .then(printTweetUrl)
+  .catch(error => console.error(error));
