@@ -11,13 +11,13 @@ const client = new Twitter({
 const tweetWithMedia = mediaIds => client.post(
   'statuses/update',
   {
-    status: 'these are two screenshots of breitbart.com',
+    status: 'breitbart.com at 3PM ET on Sunday, June 1, 2017.',
     media_ids: mediaIds
   }
 );
 
 const printTweetUrl = tweet => {
-  console.log(`https://twitter.com/davidcrespo/status/${tweet.id_str}`)
+  console.log(`https://twitter.com/breitshots/status/${tweet.id_str}`)
 };
 
 const image1 = fs.readFileSync('breitbart1.png');
